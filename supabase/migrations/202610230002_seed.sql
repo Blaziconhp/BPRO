@@ -48,7 +48,7 @@ insert into public.bpro_state(id,payload) values(1,$bpro${
           ],
           [
             "comments.add",
-            "Comment and upload files"
+            "Comment on requests (uploads require primary owner)"
           ]
         ]
       },
@@ -1633,16 +1633,9 @@ insert into public.bpro_state(id,payload) values(1,$bpro${
         "gstin": "",
         "payment_terms": "",
         "empanelled": true,
-        "notes": "__demo__",
+        "notes": "",
         "active": true,
-        "created_at": "2026-10-22 16:03:41",
-        "orders": 18,
-        "avg_production": 9.9,
-        "on_time": 20,
-        "avg_vendor_days": 11.1,
-        "issues": 1,
-        "spend": 100097.11,
-        "rate_count": 0
+        "created_at": "2026-10-22 16:03:41"
       },
       {
         "id": 2,
@@ -1654,16 +1647,9 @@ insert into public.bpro_state(id,payload) values(1,$bpro${
         "gstin": "",
         "payment_terms": "",
         "empanelled": true,
-        "notes": "__demo__",
+        "notes": "",
         "active": true,
-        "created_at": "2026-10-22 16:03:41",
-        "orders": 10,
-        "avg_production": 9.6,
-        "on_time": 11.1,
-        "avg_vendor_days": 10.7,
-        "issues": 3,
-        "spend": 85180.78000000001,
-        "rate_count": 0
+        "created_at": "2026-10-22 16:03:41"
       },
       {
         "id": 1,
@@ -1675,16 +1661,9 @@ insert into public.bpro_state(id,payload) values(1,$bpro${
         "gstin": "",
         "payment_terms": "",
         "empanelled": true,
-        "notes": "__demo__",
+        "notes": "",
         "active": true,
-        "created_at": "2026-10-22 16:03:41",
-        "orders": 7,
-        "avg_production": 7,
-        "on_time": 71.4,
-        "avg_vendor_days": 8.4,
-        "issues": 0,
-        "spend": 15226.15,
-        "rate_count": 0
+        "created_at": "2026-10-22 16:03:41"
       },
       {
         "id": 3,
@@ -1696,16 +1675,9 @@ insert into public.bpro_state(id,payload) values(1,$bpro${
         "gstin": "",
         "payment_terms": "",
         "empanelled": true,
-        "notes": "__demo__",
+        "notes": "",
         "active": true,
-        "created_at": "2026-10-22 16:03:41",
-        "orders": 17,
-        "avg_production": 11.8,
-        "on_time": 12.5,
-        "avg_vendor_days": 13.4,
-        "issues": 4,
-        "spend": 142931.99000000002,
-        "rate_count": 0
+        "created_at": "2026-10-22 16:03:41"
       },
       {
         "id": 5,
@@ -1717,16 +1689,9 @@ insert into public.bpro_state(id,payload) values(1,$bpro${
         "gstin": "",
         "payment_terms": "",
         "empanelled": true,
-        "notes": "__demo__",
+        "notes": "",
         "active": true,
-        "created_at": "2026-10-22 16:03:41",
-        "orders": 12,
-        "avg_production": 8.3,
-        "on_time": 36.4,
-        "avg_vendor_days": 10.1,
-        "issues": 1,
-        "spend": 46890.090000000004,
-        "rate_count": 0
+        "created_at": "2026-10-22 16:03:41"
       }
     ]
   },
@@ -1775,4 +1740,5 @@ insert into public.bpro_state(id,payload) values(1,$bpro${
       }
     ]
   }
-}$bpro$::jsonb) on conflict(id) do nothing;
+}
+$bpro$::jsonb) on conflict(id) do nothing;
