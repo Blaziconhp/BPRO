@@ -1,0 +1,1744 @@
+-- Configuration only: original roles and workflow; no demo requests or demo users.
+insert into public.bpro_state(id,payload) values(1,$bpro${
+  "overview": {
+    "permissions": [
+      {
+        "group": "Dashboard & reports",
+        "items": [
+          [
+            "dashboard.view",
+            "View dashboard and analytics"
+          ],
+          [
+            "reports.export",
+            "Export reports (Excel / CSV)"
+          ],
+          [
+            "financials.view",
+            "See rates, amounts and spend"
+          ]
+        ]
+      },
+      {
+        "group": "Requests",
+        "items": [
+          [
+            "requests.view_all",
+            "View all requests (otherwise only requests where they are POC or creator)"
+          ],
+          [
+            "requests.create",
+            "Raise new requests"
+          ],
+          [
+            "requests.edit",
+            "Edit own requests (as POC or creator)"
+          ],
+          [
+            "requests.edit_all",
+            "Edit any request"
+          ],
+          [
+            "requests.hold",
+            "Put on hold, cancel or reopen requests"
+          ],
+          [
+            "requests.delete",
+            "Delete requests permanently"
+          ],
+          [
+            "comments.add",
+            "Comment on requests (uploads require primary owner)"
+          ]
+        ]
+      },
+      {
+        "group": "Workflow steps",
+        "items": [
+          [
+            "steps.update",
+            "Update the steps their role owns"
+          ],
+          [
+            "steps.override",
+            "Update any step, out of order, undo or backdate"
+          ],
+          [
+            "quotes.manage",
+            "Manage vendor shortlist and quotes"
+          ],
+          [
+            "issues.manage",
+            "Log and resolve issues / mistakes"
+          ]
+        ]
+      },
+      {
+        "group": "Vendors & rates",
+        "items": [
+          [
+            "vendors.view",
+            "View vendor list and scorecards"
+          ],
+          [
+            "vendors.manage",
+            "Add and edit vendors and rate card"
+          ]
+        ]
+      },
+      {
+        "group": "Administration",
+        "items": [
+          [
+            "admin.users",
+            "Manage users"
+          ],
+          [
+            "admin.roles",
+            "Manage roles and permissions"
+          ],
+          [
+            "admin.config",
+            "Configure workflow, lists, fields, settings"
+          ],
+          [
+            "admin.import",
+            "Import data from Excel, load or clear sample data, download backup"
+          ],
+          [
+            "audit.view",
+            "View the audit log"
+          ]
+        ]
+      }
+    ],
+    "roles": [
+      {
+        "id": 1,
+        "name": "Admin",
+        "description": "Full control of the tool, including configuration.",
+        "permissions": [
+          "dashboard.view",
+          "reports.export",
+          "financials.view",
+          "requests.view_all",
+          "requests.create",
+          "requests.edit",
+          "requests.edit_all",
+          "requests.hold",
+          "requests.delete",
+          "comments.add",
+          "steps.update",
+          "steps.override",
+          "quotes.manage",
+          "issues.manage",
+          "vendors.view",
+          "vendors.manage",
+          "admin.users",
+          "admin.roles",
+          "admin.config",
+          "admin.import",
+          "audit.view"
+        ],
+        "poc_type": null,
+        "is_system": true,
+        "sort": 0,
+        "user_count": 1
+      },
+      {
+        "id": 2,
+        "name": "Head of Operations",
+        "description": "Oversees procurement; receives level-2 escalations.",
+        "permissions": [
+          "dashboard.view",
+          "reports.export",
+          "financials.view",
+          "requests.view_all",
+          "requests.create",
+          "requests.edit",
+          "requests.edit_all",
+          "requests.hold",
+          "comments.add",
+          "steps.update",
+          "steps.override",
+          "quotes.manage",
+          "issues.manage",
+          "vendors.view",
+          "vendors.manage",
+          "audit.view"
+        ],
+        "poc_type": null,
+        "is_system": false,
+        "sort": 1,
+        "user_count": 0
+      },
+      {
+        "id": 3,
+        "name": "Operations Lead",
+        "description": "Reviews delays; level-1 escalation for vendor and delivery stages.",
+        "permissions": [
+          "dashboard.view",
+          "reports.export",
+          "financials.view",
+          "requests.view_all",
+          "requests.create",
+          "requests.edit",
+          "requests.edit_all",
+          "requests.hold",
+          "comments.add",
+          "steps.update",
+          "steps.override",
+          "quotes.manage",
+          "issues.manage",
+          "vendors.view",
+          "vendors.manage"
+        ],
+        "poc_type": null,
+        "is_system": false,
+        "sort": 2,
+        "user_count": 0
+      },
+      {
+        "id": 4,
+        "name": "Procurement Executive",
+        "description": "Runs requests end to end: vendors, RFQ, production follow-up, delivery, invoice, payment.",
+        "permissions": [
+          "dashboard.view",
+          "reports.export",
+          "financials.view",
+          "requests.view_all",
+          "requests.create",
+          "requests.edit",
+          "requests.edit_all",
+          "requests.hold",
+          "comments.add",
+          "steps.update",
+          "quotes.manage",
+          "issues.manage",
+          "vendors.view",
+          "vendors.manage"
+        ],
+        "poc_type": "ops",
+        "is_system": false,
+        "sort": 3,
+        "user_count": 0
+      },
+      {
+        "id": 5,
+        "name": "Head of Marketing/EBO",
+        "description": "Oversees marketing requests; receives level-2 escalations.",
+        "permissions": [
+          "dashboard.view",
+          "reports.export",
+          "financials.view",
+          "requests.view_all",
+          "requests.create",
+          "requests.edit",
+          "requests.edit_all",
+          "requests.hold",
+          "comments.add",
+          "steps.update",
+          "issues.manage",
+          "vendors.view"
+        ],
+        "poc_type": null,
+        "is_system": false,
+        "sort": 4,
+        "user_count": 0
+      },
+      {
+        "id": 6,
+        "name": "Marketing Lead",
+        "description": "Level-1 escalation for artwork and commercial approval.",
+        "permissions": [
+          "dashboard.view",
+          "reports.export",
+          "requests.view_all",
+          "requests.create",
+          "requests.edit",
+          "requests.edit_all",
+          "requests.hold",
+          "comments.add",
+          "steps.update",
+          "issues.manage",
+          "vendors.view"
+        ],
+        "poc_type": "marketing",
+        "is_system": false,
+        "sort": 5,
+        "user_count": 0
+      },
+      {
+        "id": 7,
+        "name": "Marketing POC",
+        "description": "Raises requirements, approves artwork and commercials.",
+        "permissions": [
+          "dashboard.view",
+          "requests.view_all",
+          "requests.create",
+          "requests.edit",
+          "comments.add",
+          "steps.update",
+          "issues.manage",
+          "vendors.view"
+        ],
+        "poc_type": "marketing",
+        "is_system": false,
+        "sort": 6,
+        "user_count": 0
+      },
+      {
+        "id": 8,
+        "name": "Viewer",
+        "description": "Read-only access to requests and the dashboard.",
+        "permissions": [
+          "dashboard.view",
+          "requests.view_all",
+          "vendors.view"
+        ],
+        "poc_type": null,
+        "is_system": false,
+        "sort": 7,
+        "user_count": 0
+      }
+    ],
+    "users": [],
+    "steps": [
+      {
+        "id": 1,
+        "key": "req_raised",
+        "name": "Requirement raised",
+        "description": "Marketing shares requirement, artwork, quantity and delivery date.",
+        "owner_party": "Marketing",
+        "update_roles": [
+          7,
+          6,
+          5
+        ],
+        "sort": 0,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": null,
+        "esc1_grace_days": 0,
+        "esc1_roles": [],
+        "esc2_after_days": 2,
+        "esc2_roles": [],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 1
+      },
+      {
+        "id": 2,
+        "key": "vendor_identified",
+        "name": "Vendor identified",
+        "description": "Operations identifies vendor(s): 3 for a standard request, 1 for repeat/urgent.",
+        "owner_party": "Procurement",
+        "update_roles": [
+          4,
+          3,
+          2
+        ],
+        "sort": 1,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": 2,
+        "esc1_grace_days": 0,
+        "esc1_roles": [
+          3
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          2,
+          5
+        ],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 1,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 3,
+        "key": "rfq_sent",
+        "name": "RFQ sent",
+        "description": "RFQ mailed to vendor(s) with Marketing in CC.",
+        "owner_party": "Procurement",
+        "update_roles": [
+          4,
+          3,
+          2
+        ],
+        "sort": 2,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": 1,
+        "esc1_grace_days": 0,
+        "esc1_roles": [
+          3
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          2
+        ],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 4,
+        "key": "proof_shared",
+        "name": "Quotation & proof received",
+        "description": "Vendor shares quotation and proof on the mail thread.",
+        "owner_party": "Vendor",
+        "update_roles": [
+          4,
+          3,
+          2
+        ],
+        "sort": 3,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": 2,
+        "esc1_grace_days": 0,
+        "esc1_roles": [
+          3
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          2,
+          5
+        ],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 5,
+        "key": "artwork_approval",
+        "name": "Artwork approved",
+        "description": "Marketing approves final artwork. The lead-time countdown starts here.",
+        "owner_party": "Marketing",
+        "update_roles": [
+          7,
+          6,
+          5
+        ],
+        "sort": 4,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": 3,
+        "esc1_grace_days": 0,
+        "esc1_roles": [
+          6
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          5,
+          2
+        ],
+        "starts_lead_time": 1,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 6,
+        "key": "commercial_approval",
+        "name": "Commercial approved",
+        "description": "Marketing approves price and selected vendor.",
+        "owner_party": "Marketing",
+        "update_roles": [
+          7,
+          6,
+          5
+        ],
+        "sort": 5,
+        "parallel_with_prev": 1,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": 3,
+        "esc1_grace_days": 0,
+        "esc1_roles": [
+          6
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          5,
+          2
+        ],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 1,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 7,
+        "key": "production",
+        "name": "Production complete",
+        "description": "Vendor prints/produces. Due date = lead time from artwork approval.",
+        "owner_party": "Vendor",
+        "update_roles": [
+          4,
+          3,
+          2
+        ],
+        "sort": 6,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "lead_time",
+        "sla_days": null,
+        "esc1_grace_days": 1,
+        "esc1_roles": [
+          3
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          2,
+          5
+        ],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 8,
+        "key": "dispatched",
+        "name": "Dispatched",
+        "description": "Vendor dispatches to the store.",
+        "owner_party": "Vendor",
+        "update_roles": [
+          4,
+          3,
+          2
+        ],
+        "sort": 7,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": 1,
+        "esc1_grace_days": 0,
+        "esc1_roles": [
+          3
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          2
+        ],
+        "starts_lead_time": 0,
+        "ends_lead_time": 1,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 9,
+        "key": "delivered",
+        "name": "Delivered to store",
+        "description": "Material received at the EBO / kiosk.",
+        "owner_party": "Procurement",
+        "update_roles": [
+          4,
+          3,
+          2
+        ],
+        "sort": 8,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": 3,
+        "esc1_grace_days": 0,
+        "esc1_roles": [
+          3
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          2,
+          5
+        ],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 1,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 10,
+        "key": "qc",
+        "name": "QC report from store",
+        "description": "Store shares QC report with pictures within 24 hours of delivery.",
+        "owner_party": "Store",
+        "update_roles": [
+          4,
+          3,
+          2,
+          7,
+          6,
+          5
+        ],
+        "sort": 9,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": 1,
+        "esc1_grace_days": 0,
+        "esc1_roles": [
+          3
+        ],
+        "esc2_after_days": 2,
+        "esc2_roles": [
+          2
+        ],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 1,
+        "auto_done": 0
+      },
+      {
+        "id": 11,
+        "key": "invoice",
+        "name": "Invoice booked",
+        "description": "Operations books the vendor invoice.",
+        "owner_party": "Procurement",
+        "update_roles": [
+          4,
+          3,
+          2
+        ],
+        "sort": 10,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": null,
+        "esc1_grace_days": 0,
+        "esc1_roles": [],
+        "esc2_after_days": 2,
+        "esc2_roles": [],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      },
+      {
+        "id": 12,
+        "key": "payment",
+        "name": "Payment",
+        "description": "Operations processes the payment.",
+        "owner_party": "Procurement",
+        "update_roles": [
+          4,
+          3,
+          2
+        ],
+        "sort": 11,
+        "parallel_with_prev": 0,
+        "active": 1,
+        "sla_mode": "fixed",
+        "sla_days": null,
+        "esc1_grace_days": 0,
+        "esc1_roles": [],
+        "esc2_after_days": 2,
+        "esc2_roles": [],
+        "starts_lead_time": 0,
+        "ends_lead_time": 0,
+        "is_delivery": 0,
+        "req_quotes": 0,
+        "req_vendor": 0,
+        "req_attachment": 0,
+        "auto_done": 0
+      }
+    ],
+    "collaterals": [
+      {
+        "id": 1,
+        "name": "Tent Cards",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 0,
+        "active": 1
+      },
+      {
+        "id": 2,
+        "name": "Stickers & Labels",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 1,
+        "active": 1
+      },
+      {
+        "id": 3,
+        "name": "Offset Flyers",
+        "lead_days": 7,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 2,
+        "active": 1
+      },
+      {
+        "id": 4,
+        "name": "Visiting Cards",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 3,
+        "active": 1
+      },
+      {
+        "id": 5,
+        "name": "Sun board",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 4,
+        "active": 1
+      },
+      {
+        "id": 6,
+        "name": "Vinyl Poster",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 5,
+        "active": 1
+      },
+      {
+        "id": 7,
+        "name": "Badges",
+        "lead_days": 8,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 6,
+        "active": 1
+      },
+      {
+        "id": 8,
+        "name": "Letterheads / Prescription pads",
+        "lead_days": 7,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 7,
+        "active": 1
+      },
+      {
+        "id": 9,
+        "name": "Standees",
+        "lead_days": 10,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 8,
+        "active": 1
+      },
+      {
+        "id": 10,
+        "name": "Brochure",
+        "lead_days": 10,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 9,
+        "active": 1
+      },
+      {
+        "id": 11,
+        "name": "Repair work / Fabrication work",
+        "lead_days": 10,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 10,
+        "active": 1
+      },
+      {
+        "id": 12,
+        "name": "Customized Wooden Material",
+        "lead_days": 15,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 11,
+        "active": 1
+      },
+      {
+        "id": 13,
+        "name": "Paper Bags",
+        "lead_days": 20,
+        "lead_days_max": 25,
+        "notes": "",
+        "sort": 12,
+        "active": 1
+      },
+      {
+        "id": 14,
+        "name": "Cloth Bags",
+        "lead_days": 25,
+        "lead_days_max": 30,
+        "notes": "",
+        "sort": 13,
+        "active": 1
+      },
+      {
+        "id": 15,
+        "name": "Other booklets (Standard)",
+        "lead_days": 7,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 14,
+        "active": 1
+      },
+      {
+        "id": 16,
+        "name": "Other booklets (Specific new format)",
+        "lead_days": 10,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 15,
+        "active": 1
+      },
+      {
+        "id": 17,
+        "name": "Other / Not listed",
+        "lead_days": 7,
+        "lead_days_max": null,
+        "notes": "",
+        "sort": 16,
+        "active": 1
+      }
+    ],
+    "lookups": [
+      {
+        "id": 23,
+        "type": "cancel_reason",
+        "value": "Requirement no longer needed",
+        "meta": {},
+        "sort": 0,
+        "active": 1
+      },
+      {
+        "id": 24,
+        "type": "cancel_reason",
+        "value": "Replaced by another request",
+        "meta": {},
+        "sort": 1,
+        "active": 1
+      },
+      {
+        "id": 25,
+        "type": "cancel_reason",
+        "value": "Raised by mistake",
+        "meta": {},
+        "sort": 2,
+        "active": 1
+      },
+      {
+        "id": 26,
+        "type": "cancel_reason",
+        "value": "Budget not approved",
+        "meta": {},
+        "sort": 3,
+        "active": 1
+      },
+      {
+        "id": 27,
+        "type": "cancel_reason",
+        "value": "Other",
+        "meta": {},
+        "sort": 4,
+        "active": 1
+      },
+      {
+        "id": 12,
+        "type": "issue_type",
+        "value": "Design change after RFQ",
+        "meta": {},
+        "sort": 0,
+        "active": 1
+      },
+      {
+        "id": 13,
+        "type": "issue_type",
+        "value": "Design change after production started",
+        "meta": {},
+        "sort": 1,
+        "active": 1
+      },
+      {
+        "id": 14,
+        "type": "issue_type",
+        "value": "Artwork issue",
+        "meta": {},
+        "sort": 2,
+        "active": 1
+      },
+      {
+        "id": 15,
+        "type": "issue_type",
+        "value": "Cancelled after production was done",
+        "meta": {},
+        "sort": 3,
+        "active": 1
+      },
+      {
+        "id": 16,
+        "type": "issue_type",
+        "value": "Order put on hold after approval",
+        "meta": {},
+        "sort": 4,
+        "active": 1
+      },
+      {
+        "id": 17,
+        "type": "issue_type",
+        "value": "Wrong quantity / size",
+        "meta": {},
+        "sort": 5,
+        "active": 1
+      },
+      {
+        "id": 18,
+        "type": "issue_type",
+        "value": "Print quality problem",
+        "meta": {},
+        "sort": 6,
+        "active": 1
+      },
+      {
+        "id": 19,
+        "type": "issue_type",
+        "value": "Vendor delay",
+        "meta": {},
+        "sort": 7,
+        "active": 1
+      },
+      {
+        "id": 20,
+        "type": "issue_type",
+        "value": "Delivery damaged / short",
+        "meta": {},
+        "sort": 8,
+        "active": 1
+      },
+      {
+        "id": 21,
+        "type": "issue_type",
+        "value": "Late QC report from store",
+        "meta": {},
+        "sort": 9,
+        "active": 1
+      },
+      {
+        "id": 22,
+        "type": "issue_type",
+        "value": "Other",
+        "meta": {},
+        "sort": 10,
+        "active": 1
+      },
+      {
+        "id": 1,
+        "type": "location",
+        "value": "BOHECO Andheri",
+        "meta": {},
+        "sort": 0,
+        "active": 1
+      },
+      {
+        "id": 2,
+        "type": "location",
+        "value": "Andheri Warehouse",
+        "meta": {},
+        "sort": 1,
+        "active": 1
+      },
+      {
+        "id": 3,
+        "type": "location",
+        "value": "Bhiwandi",
+        "meta": {},
+        "sort": 2,
+        "active": 1
+      },
+      {
+        "id": 4,
+        "type": "location",
+        "value": "Bengaluru EBO",
+        "meta": {},
+        "sort": 3,
+        "active": 1
+      },
+      {
+        "id": 5,
+        "type": "location",
+        "value": "Hyderabad Kiosk",
+        "meta": {},
+        "sort": 4,
+        "active": 1
+      },
+      {
+        "id": 6,
+        "type": "location",
+        "value": "Noida Kiosk",
+        "meta": {},
+        "sort": 5,
+        "active": 1
+      },
+      {
+        "id": 7,
+        "type": "location",
+        "value": "Delhi EBO",
+        "meta": {},
+        "sort": 6,
+        "active": 1
+      },
+      {
+        "id": 8,
+        "type": "location",
+        "value": "Gurugram EBO",
+        "meta": {},
+        "sort": 7,
+        "active": 1
+      },
+      {
+        "id": 28,
+        "type": "party",
+        "value": "Marketing",
+        "meta": {},
+        "sort": 0,
+        "active": 1
+      },
+      {
+        "id": 29,
+        "type": "party",
+        "value": "Procurement",
+        "meta": {},
+        "sort": 1,
+        "active": 1
+      },
+      {
+        "id": 30,
+        "type": "party",
+        "value": "Vendor",
+        "meta": {},
+        "sort": 2,
+        "active": 1
+      },
+      {
+        "id": 31,
+        "type": "party",
+        "value": "Store",
+        "meta": {},
+        "sort": 3,
+        "active": 1
+      },
+      {
+        "id": 9,
+        "type": "request_type",
+        "value": "Standard (3-vendor comparison)",
+        "meta": {
+          "min_quotes": 3,
+          "requires_reason": false,
+          "urgent": false,
+          "description": "New requirement: Operations gets quotes from at least 3 vendors."
+        },
+        "sort": 0,
+        "active": 1
+      },
+      {
+        "id": 10,
+        "type": "request_type",
+        "value": "Repeat order (existing vendor)",
+        "meta": {
+          "min_quotes": 1,
+          "requires_reason": false,
+          "urgent": false,
+          "description": "Placed directly with the existing vendor."
+        },
+        "sort": 1,
+        "active": 1
+      },
+      {
+        "id": 11,
+        "type": "request_type",
+        "value": "Urgent (empanelled vendor)",
+        "meta": {
+          "min_quotes": 1,
+          "requires_reason": true,
+          "urgent": true,
+          "description": "Comparison skipped; reason is mandatory (store opening, event date, compliance deadline)."
+        },
+        "sort": 2,
+        "active": 1
+      }
+    ],
+    "custom_fields": [],
+    "holidays": [],
+    "settings": {
+      "company_name": "Bombay Hemp Company",
+      "app_name": "BPRO",
+      "pr_prefix": "EBO/PR",
+      "fy_start_month": 4,
+      "weekly_off": [
+        0
+      ],
+      "timezone": "Asia/Kolkata",
+      "qc_window_hours": 24,
+      "auto_close_when_complete": true,
+      "session_hours": 12,
+      "min_password_length": 8,
+      "currency_symbol": "₹",
+      "urgent_monthly_review_threshold": 30
+    },
+    "demo_count": 0,
+    "request_count": 0
+  },
+  "meta": {
+    "settings": {
+      "company_name": "Bombay Hemp Company",
+      "app_name": "BPRO",
+      "currency_symbol": "₹",
+      "weekly_off": [
+        0
+      ],
+      "qc_window_hours": 24,
+      "urgent_threshold": 30
+    },
+    "today": "2026-10-22",
+    "steps": [
+      {
+        "id": 1,
+        "key": "req_raised",
+        "name": "Requirement raised",
+        "owner_party": "Marketing",
+        "group": 0,
+        "sla_days": null,
+        "sla_mode": "fixed",
+        "description": "Marketing shares requirement, artwork, quantity and delivery date.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 2,
+        "key": "vendor_identified",
+        "name": "Vendor identified",
+        "owner_party": "Procurement",
+        "group": 1,
+        "sla_days": 2,
+        "sla_mode": "fixed",
+        "description": "Operations identifies vendor(s): 3 for a standard request, 1 for repeat/urgent.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 3,
+        "key": "rfq_sent",
+        "name": "RFQ sent",
+        "owner_party": "Procurement",
+        "group": 2,
+        "sla_days": 1,
+        "sla_mode": "fixed",
+        "description": "RFQ mailed to vendor(s) with Marketing in CC.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 4,
+        "key": "proof_shared",
+        "name": "Quotation & proof received",
+        "owner_party": "Vendor",
+        "group": 3,
+        "sla_days": 2,
+        "sla_mode": "fixed",
+        "description": "Vendor shares quotation and proof on the mail thread.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 5,
+        "key": "artwork_approval",
+        "name": "Artwork approved",
+        "owner_party": "Marketing",
+        "group": 4,
+        "sla_days": 3,
+        "sla_mode": "fixed",
+        "description": "Marketing approves final artwork. The lead-time countdown starts here.",
+        "starts_lead_time": true,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 6,
+        "key": "commercial_approval",
+        "name": "Commercial approved",
+        "owner_party": "Marketing",
+        "group": 4,
+        "sla_days": 3,
+        "sla_mode": "fixed",
+        "description": "Marketing approves price and selected vendor.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 7,
+        "key": "production",
+        "name": "Production complete",
+        "owner_party": "Vendor",
+        "group": 5,
+        "sla_days": null,
+        "sla_mode": "lead_time",
+        "description": "Vendor prints/produces. Due date = lead time from artwork approval.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 8,
+        "key": "dispatched",
+        "name": "Dispatched",
+        "owner_party": "Vendor",
+        "group": 6,
+        "sla_days": 1,
+        "sla_mode": "fixed",
+        "description": "Vendor dispatches to the store.",
+        "starts_lead_time": false,
+        "ends_lead_time": true,
+        "is_delivery": false
+      },
+      {
+        "id": 9,
+        "key": "delivered",
+        "name": "Delivered to store",
+        "owner_party": "Procurement",
+        "group": 7,
+        "sla_days": 3,
+        "sla_mode": "fixed",
+        "description": "Material received at the EBO / kiosk.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": true
+      },
+      {
+        "id": 10,
+        "key": "qc",
+        "name": "QC report from store",
+        "owner_party": "Store",
+        "group": 8,
+        "sla_days": 1,
+        "sla_mode": "fixed",
+        "description": "Store shares QC report with pictures within 24 hours of delivery.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 11,
+        "key": "invoice",
+        "name": "Invoice booked",
+        "owner_party": "Procurement",
+        "group": 9,
+        "sla_days": null,
+        "sla_mode": "fixed",
+        "description": "Operations books the vendor invoice.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      },
+      {
+        "id": 12,
+        "key": "payment",
+        "name": "Payment",
+        "owner_party": "Procurement",
+        "group": 10,
+        "sla_days": null,
+        "sla_mode": "fixed",
+        "description": "Operations processes the payment.",
+        "starts_lead_time": false,
+        "ends_lead_time": false,
+        "is_delivery": false
+      }
+    ],
+    "collaterals": [
+      {
+        "id": 1,
+        "name": "Tent Cards",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 2,
+        "name": "Stickers & Labels",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 3,
+        "name": "Offset Flyers",
+        "lead_days": 7,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 4,
+        "name": "Visiting Cards",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 5,
+        "name": "Sun board",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 6,
+        "name": "Vinyl Poster",
+        "lead_days": 5,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 7,
+        "name": "Badges",
+        "lead_days": 8,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 8,
+        "name": "Letterheads / Prescription pads",
+        "lead_days": 7,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 9,
+        "name": "Standees",
+        "lead_days": 10,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 10,
+        "name": "Brochure",
+        "lead_days": 10,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 11,
+        "name": "Repair work / Fabrication work",
+        "lead_days": 10,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 12,
+        "name": "Customized Wooden Material",
+        "lead_days": 15,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 13,
+        "name": "Paper Bags",
+        "lead_days": 20,
+        "lead_days_max": 25,
+        "active": 1
+      },
+      {
+        "id": 14,
+        "name": "Cloth Bags",
+        "lead_days": 25,
+        "lead_days_max": 30,
+        "active": 1
+      },
+      {
+        "id": 15,
+        "name": "Other booklets (Standard)",
+        "lead_days": 7,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 16,
+        "name": "Other booklets (Specific new format)",
+        "lead_days": 10,
+        "lead_days_max": null,
+        "active": 1
+      },
+      {
+        "id": 17,
+        "name": "Other / Not listed",
+        "lead_days": 7,
+        "lead_days_max": null,
+        "active": 1
+      }
+    ],
+    "locations": [
+      {
+        "id": 1,
+        "value": "BOHECO Andheri",
+        "active": true
+      },
+      {
+        "id": 2,
+        "value": "Andheri Warehouse",
+        "active": true
+      },
+      {
+        "id": 3,
+        "value": "Bhiwandi",
+        "active": true
+      },
+      {
+        "id": 4,
+        "value": "Bengaluru EBO",
+        "active": true
+      },
+      {
+        "id": 5,
+        "value": "Hyderabad Kiosk",
+        "active": true
+      },
+      {
+        "id": 6,
+        "value": "Noida Kiosk",
+        "active": true
+      },
+      {
+        "id": 7,
+        "value": "Delhi EBO",
+        "active": true
+      },
+      {
+        "id": 8,
+        "value": "Gurugram EBO",
+        "active": true
+      }
+    ],
+    "request_types": [
+      {
+        "id": 9,
+        "value": "Standard (3-vendor comparison)",
+        "meta": {
+          "min_quotes": 3,
+          "requires_reason": false,
+          "urgent": false,
+          "description": "New requirement: Operations gets quotes from at least 3 vendors."
+        },
+        "active": true
+      },
+      {
+        "id": 10,
+        "value": "Repeat order (existing vendor)",
+        "meta": {
+          "min_quotes": 1,
+          "requires_reason": false,
+          "urgent": false,
+          "description": "Placed directly with the existing vendor."
+        },
+        "active": true
+      },
+      {
+        "id": 11,
+        "value": "Urgent (empanelled vendor)",
+        "meta": {
+          "min_quotes": 1,
+          "requires_reason": true,
+          "urgent": true,
+          "description": "Comparison skipped; reason is mandatory (store opening, event date, compliance deadline)."
+        },
+        "active": true
+      }
+    ],
+    "issue_types": [
+      {
+        "id": 12,
+        "value": "Design change after RFQ",
+        "active": true
+      },
+      {
+        "id": 13,
+        "value": "Design change after production started",
+        "active": true
+      },
+      {
+        "id": 14,
+        "value": "Artwork issue",
+        "active": true
+      },
+      {
+        "id": 15,
+        "value": "Cancelled after production was done",
+        "active": true
+      },
+      {
+        "id": 16,
+        "value": "Order put on hold after approval",
+        "active": true
+      },
+      {
+        "id": 17,
+        "value": "Wrong quantity / size",
+        "active": true
+      },
+      {
+        "id": 18,
+        "value": "Print quality problem",
+        "active": true
+      },
+      {
+        "id": 19,
+        "value": "Vendor delay",
+        "active": true
+      },
+      {
+        "id": 20,
+        "value": "Delivery damaged / short",
+        "active": true
+      },
+      {
+        "id": 21,
+        "value": "Late QC report from store",
+        "active": true
+      },
+      {
+        "id": 22,
+        "value": "Other",
+        "active": true
+      }
+    ],
+    "cancel_reasons": [
+      {
+        "id": 23,
+        "value": "Requirement no longer needed",
+        "active": true
+      },
+      {
+        "id": 24,
+        "value": "Replaced by another request",
+        "active": true
+      },
+      {
+        "id": 25,
+        "value": "Raised by mistake",
+        "active": true
+      },
+      {
+        "id": 26,
+        "value": "Budget not approved",
+        "active": true
+      },
+      {
+        "id": 27,
+        "value": "Other",
+        "active": true
+      }
+    ],
+    "parties": [
+      "Marketing",
+      "Procurement",
+      "Vendor",
+      "Store"
+    ],
+    "vendors": [
+      {
+        "id": 4,
+        "name": "Cadmap Graphics",
+        "empanelled": 1,
+        "active": 1
+      },
+      {
+        "id": 2,
+        "name": "Dot badges",
+        "empanelled": 1,
+        "active": 1
+      },
+      {
+        "id": 1,
+        "name": "Honesty Printers",
+        "empanelled": 1,
+        "active": 1
+      },
+      {
+        "id": 3,
+        "name": "Josco Signs",
+        "empanelled": 1,
+        "active": 1
+      },
+      {
+        "id": 5,
+        "name": "Vishwas ENT",
+        "empanelled": 1,
+        "active": 1
+      }
+    ],
+    "users": [],
+    "custom_fields": [],
+    "can_see_financials": true
+  },
+  "vendors": {
+    "rows": [
+      {
+        "id": 4,
+        "name": "Cadmap Graphics",
+        "contact_person": "",
+        "email": "",
+        "phone": "",
+        "address": "",
+        "gstin": "",
+        "payment_terms": "",
+        "empanelled": true,
+        "notes": "",
+        "active": true,
+        "created_at": "2026-10-22 16:03:41"
+      },
+      {
+        "id": 2,
+        "name": "Dot badges",
+        "contact_person": "",
+        "email": "",
+        "phone": "",
+        "address": "",
+        "gstin": "",
+        "payment_terms": "",
+        "empanelled": true,
+        "notes": "",
+        "active": true,
+        "created_at": "2026-10-22 16:03:41"
+      },
+      {
+        "id": 1,
+        "name": "Honesty Printers",
+        "contact_person": "",
+        "email": "",
+        "phone": "",
+        "address": "",
+        "gstin": "",
+        "payment_terms": "",
+        "empanelled": true,
+        "notes": "",
+        "active": true,
+        "created_at": "2026-10-22 16:03:41"
+      },
+      {
+        "id": 3,
+        "name": "Josco Signs",
+        "contact_person": "",
+        "email": "",
+        "phone": "",
+        "address": "",
+        "gstin": "",
+        "payment_terms": "",
+        "empanelled": true,
+        "notes": "",
+        "active": true,
+        "created_at": "2026-10-22 16:03:41"
+      },
+      {
+        "id": 5,
+        "name": "Vishwas ENT",
+        "contact_person": "",
+        "email": "",
+        "phone": "",
+        "address": "",
+        "gstin": "",
+        "payment_terms": "",
+        "empanelled": true,
+        "notes": "",
+        "active": true,
+        "created_at": "2026-10-22 16:03:41"
+      }
+    ]
+  },
+  "req": {},
+  "reports": {
+    "reports": [
+      {
+        "key": "requests",
+        "title": "Request register",
+        "desc": "Every request with all details and the date each step was completed."
+      },
+      {
+        "key": "steps",
+        "title": "Step turnaround",
+        "desc": "One row per request step: owner, start, completion, working days taken, SLA and delay."
+      },
+      {
+        "key": "overdue",
+        "title": "Overdue and escalations",
+        "desc": "Open requests that are past due, with the stuck step, owner and escalation level."
+      },
+      {
+        "key": "vendors",
+        "title": "Vendor performance",
+        "desc": "Orders, production turnaround, on-time dispatch, issues and spend per vendor."
+      },
+      {
+        "key": "quotes",
+        "title": "Vendor quote comparison",
+        "desc": "All quotes received per request, with the vendor chosen."
+      },
+      {
+        "key": "issues",
+        "title": "Issues and mistakes log",
+        "desc": "Design changes, cancellations and other problems with responsible party and cost."
+      },
+      {
+        "key": "urgent",
+        "title": "Urgent requests by requester",
+        "desc": "Monthly review of urgent-flag usage with business reasons (SOP 10.3)."
+      },
+      {
+        "key": "summary",
+        "title": "Management summary",
+        "desc": "KPIs, step turnaround, time by party, collateral and location views in one workbook."
+      }
+    ]
+  }
+}
+$bpro$::jsonb) on conflict(id) do nothing;
