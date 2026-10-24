@@ -7,8 +7,9 @@ export class HttpError extends Error {
 export class Supabase {
   constructor(env) {
     this.url = env.SUPABASE_URL?.replace(/\/$/, "");
-    this.anon = env.SUPABASE_ANON_KEY;
-    this.secret = env.SUPABASE_SERVICE_ROLE_KEY;
+    this.anon = env.SUPABASE_PUBLISHABLE_KEY || env.SUPABASE_ANON_KEY;
+    this.secret =
+      env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
   }
   get configured() {
     return !!(

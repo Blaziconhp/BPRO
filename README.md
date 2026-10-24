@@ -2,7 +2,27 @@
 
 Procurement dashboard adapted from the supplied `index (1).html`. The original layout, eight role definitions, 12-step workflow, requests, tasks, vendors, reports, calendar and configuration screens are retained. Demo authentication, sample requests, fake uploads and silent successful writes are removed.
 
-**Status: implemented and locally tested; NOT connected to a live Supabase project.** A Supabase project, server environment variables, migrations, and an explicitly selected owner UUID are required. GitHub Pages alone cannot run this application; it needs a Node server.
+**Status: GitHub Pages is deployed; Edge Function integration is prepared but requires deployment secrets and live verification.** The Supabase Edge Function adapts the existing API routes in `server/index.mjs`. Protected routes use Supabase Auth, server-side RBAC, and the owner identity stored in the database. Do not use the site for production records until the Edge Function has deployed, migrations have applied, the owner has been bootstrapped, and live login and upload checks pass.
+
+## GitHub Pages + Edge Functions deployment
+
+The `pages.yml` workflow publishes `public/` to `https://blaziconhp.github.io/BPRO/`. In the GitHub repository settings, enable Pages with **GitHub Actions** as the source. The frontend is configured for:
+
+```text
+https://ogtwwviftkmdzckgnphd.supabase.co/functions/v1/bpro-api
+```
+
+The Edge Function must set CORS for `https://blaziconhp.github.io` (and the custom domain if you add one), use `credentials: true`, and keep the secret key server-side. Configure these Supabase Edge Function secrets after rotating the exposed secret:
+
+```text
+SUPABASE_URL=https://ogtwwviftkmdzckgnphd.supabase.co
+SUPABASE_PUBLISHABLE_KEY=...
+SUPABASE_SECRET_KEY=...
+SUPABASE_JWKS_URL=https://ogtwwviftkmdzckgnphd.supabase.co/auth/v1/.well-known/jwks.json
+ALLOWED_ORIGIN=https://blaziconhp.github.io
+```
+
+The `SUPABASE_SECRET_KEY` must never be placed in `public/`, GitHub Pages secrets used by the frontend, browser JavaScript, or committed files. Because the secret was pasted into chat, revoke it and create a replacement before deployment.
 
 ## Run locally
 

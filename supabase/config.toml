@@ -1,0 +1,6 @@
+project_id = "ogtwwviftkmdzckgnphd"
+
+[functions.bpro-api]
+# The function performs BPRO's session and role checks itself; anonymous login
+# and status calls must reach the handler before a user JWT exists.
+verify_jwt = false

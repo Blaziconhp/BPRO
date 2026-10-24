@@ -450,9 +450,12 @@
     try {
       return await fetch(BASE + "/api" + url, {
         method,
-        headers: h2,
+        headers: {
+          ...h2,
+          ...(getToken() ? { Authorization: `Bearer ${getToken().access}`, "X-Bpro-Refresh": getToken().refresh || "" } : {}),
+        },
         body,
-        credentials: "same-origin",
+        credentials: "include",
       });
     } catch (e) {
       throw new ApiError(
@@ -469,6 +472,9 @@
       payload = JSON.stringify(body);
     }
     const res = await rawFetch(method, url, { body: payload, headers });
+    const nextAccess = res.headers.get("x-bpro-access");
+    const nextRefresh = res.headers.get("x-bpro-refresh");
+    if (nextAccess && nextRefresh) setToken({ access: nextAccess, refresh: nextRefresh });
     const ct = res.headers.get("content-type") || "";
     const data = ct.includes("application/json")
       ? await res.json().catch(() => ({}))
@@ -681,8 +687,15 @@
       BASE = String(
         (window.EBO_CONFIG && window.EBO_CONFIG.apiBase) || "",
       ).replace(/\/+$/, "");
-      getToken = () => "cookie-session";
-      setToken = () => {};
+      TOKEN_KEY = "bpro_session";
+      try { memToken = JSON.parse(sessionStorage.getItem(TOKEN_KEY) || "null"); } catch { memToken = null; }
+      getToken = () => memToken;
+      setToken = (value) => {
+        if (!value) { memToken = null; sessionStorage.removeItem(TOKEN_KEY); return; }
+        if (typeof value === "string") return;
+        memToken = { access: value.access, refresh: value.refresh };
+        sessionStorage.setItem(TOKEN_KEY, JSON.stringify(memToken));
+      };
       onUnauthorized = () => {};
       setUnauthorizedHandler = (fn) => {
         onUnauthorized = fn;

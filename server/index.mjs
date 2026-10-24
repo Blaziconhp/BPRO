@@ -2,6 +2,7 @@ import http from "node:http";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
+import { Buffer } from "node:buffer";
 import { Supabase, HttpError } from "./supabase.mjs";
 import {
   assert,
@@ -48,8 +49,8 @@ const parseCookies = (req) =>
         return [x.slice(0, i).trim(), x.slice(i + 1)];
       }),
   );
-function cookies(res, session, secure) {
-  const suffix = `; HttpOnly; SameSite=Strict; Path=/${secure ? "; Secure" : ""}`;
+function cookies(res, session, secure, sameSite = "Strict") {
+  const suffix = `; HttpOnly; SameSite=${sameSite}; Path=/${secure ? "; Secure" : ""}`;
   res.setHeader("Set-Cookie", [
     `bpro_access=${session?.access_token || ""}; Max-Age=${session?.expires_in || 0}${suffix}`,
     `bpro_refresh=${session?.refresh_token || ""}; Max-Age=${session ? 604800 : 0}${suffix}`,
@@ -94,7 +95,7 @@ export function createApp({ env = process.env, db = new Supabase(env) } = {}) {
       rates.set(key, (r = { count: 0, until: now + window }));
     assert(++r.count <= max, 429, "Too many requests. Try again shortly.");
   };
-  return http.createServer(async (req, res) => {
+  const handler = async (req, res) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Referrer-Policy", "no-referrer");
     res.setHeader("X-Frame-Options", "DENY");
@@ -161,7 +162,7 @@ export function createApp({ env = process.env, db = new Supabase(env) } = {}) {
           owner,
           state.overview.roles,
         );
-        cookies(res, session, secure);
+        cookies(res, session, secure, env.COOKIE_SAMESITE || "Strict");
         return json(res, { user });
       }
       const cs = parseCookies(req);
@@ -177,7 +178,7 @@ export function createApp({ env = process.env, db = new Supabase(env) } = {}) {
         );
         token = session.access_token;
         auth = session.user;
-        cookies(res, session, secure);
+          cookies(res, session, secure, env.COOKIE_SAMESITE || "Strict");
       }
       if (path === "/auth/logout" && method === "POST") {
         cookies(res, null, secure);
@@ -579,9 +580,14 @@ export function createApp({ env = process.env, db = new Supabase(env) } = {}) {
         );
       else res.end();
     }
-  });
+  };
+  return http.createServer(handler);
 }
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+export function createHandler(options = {}) {
+  const app = createApp(options);
+  return app.listeners("request")[0];
+}
+if (typeof process !== "undefined" && process.argv[1] === fileURLToPath(import.meta.url)) {
   const app = createApp();
   app.listen(Number(process.env.PORT) || 3000, "127.0.0.1", () =>
     console.log("BPRO ready on port " + (process.env.PORT || 3000)),
