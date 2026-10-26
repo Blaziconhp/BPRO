@@ -247,7 +247,7 @@ hr.sep { border: 0; border-top: 1px solid var(--line-2); margin: 14px 0; }
 <div id="root"></div>
 <noscript>This tool needs JavaScript. Please enable it in your browser.</noscript>
 
-<!-- BPRO uses same-origin server routes. Configure server secrets in the environment. -->
-<script src="./config.js" defer></script>
-<script src="./app.js" defer></script>
+<!-- Static GitHub Pages frontend connects directly to Supabase with the publishable key. -->
+<script src="./config.js"></script>
+<script type="module" src="./bootstrap.mjs"></script>
 </body></html>

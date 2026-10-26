@@ -10,7 +10,7 @@ test("migrations, Auth synchronization, RLS, owner protection and atomic commits
     // Minimal Supabase-owned schemas for local PostgreSQL tests; not a live Auth/Storage service.
     await db.exec(`create role anon; create role authenticated; create role service_role bypassrls;
     create schema auth; create schema storage;
-    create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}');
+    create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}',last_sign_in_at timestamptz);
     create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
     grant usage on schema auth,storage to anon,authenticated,service_role;
     create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
@@ -21,6 +21,15 @@ test("migrations, Auth synchronization, RLS, owner protection and atomic commits
       await readFile(
         new URL(
           "../supabase/migrations/202610230001_bpro.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/202610260001_static_client_access.sql",
           import.meta.url,
         ),
         "utf8",
@@ -119,18 +128,54 @@ test("migrations, Auth synchronization, RLS, owner protection and atomic commits
         );
       },
     );
+    await t.test("direct Supabase RPCs derive owner identity and sync Auth users", async () => {
+      await db.exec(`set role authenticated; select set_config('request.jwt.claim.sub','${owner}',false);`);
+      const context = (await db.query("select public.bpro_direct_context() context")).rows[0].context;
+      assert.equal(context.is_owner, true);
+      const users = await db.query("select * from public.bpro_direct_list_users()");
+      assert.equal(users.rows.length, 2);
+      assert.equal(users.rows.find((u) => u.id === owner).is_owner, true);
+      await db.query("select public.bpro_assign_role_direct($1,8,true)", [member]);
+      await db.exec("reset role");
+      await db.exec(`set role authenticated; select set_config('request.jwt.claim.sub','${member}',false);`);
+      const memberContext = (await db.query("select public.bpro_direct_context() context")).rows[0].context;
+      assert.equal(memberContext.is_owner, false);
+      await assert.rejects(db.query("select * from public.bpro_direct_list_users()"));
+      assert.equal(typeof (await db.query("select public.bpro_direct_read_state() payload")).rows[0].payload.overview, "object");
+      const snapshot = (await db.query("select public.bpro_direct_read_snapshot() snapshot")).rows[0].snapshot;
+      assert.equal(snapshot.revision, 0);
+      assert.equal(typeof snapshot.payload.req, "object");
+      await assert.rejects(db.query("select public.bpro_assign_role_direct($1,1,true)", [member]));
+      // A regular assigned user can save an unchanged redacted snapshot, but cannot forge admin data.
+      const unchanged = snapshot.payload;
+      const saved = await db.query("select public.bpro_direct_commit($1,$2,'no_change') result", [snapshot.revision, JSON.stringify(unchanged)]);
+      assert.equal(saved.rows[0].result.saved, true);
+      const forged = structuredClone(unchanged);
+      forged.overview.roles[0].name = "Forged role";
+      await assert.rejects(db.query("select public.bpro_direct_commit($1,$2,'forged')", [1, JSON.stringify(forged)]), /configuration/);
+
+      // The signed-in owner can make configuration changes without supplying an actor ID.
+      await db.exec("reset role");
+      await db.exec(`set role authenticated; select set_config('request.jwt.claim.sub','${owner}',false);`);
+      const ownerPayload = (await db.query("select (public.bpro_direct_read_snapshot())->'payload' payload")).rows[0].payload;
+      ownerPayload.overview.settings.company_name = "Production BPRO";
+      const ownerSave = await db.query("select public.bpro_direct_commit(1,$1,'owner_config') result", [JSON.stringify(ownerPayload)]);
+      assert.equal(ownerSave.rows[0].result.saved, true);
+      await db.exec("reset role");
+    });
     await t.test(
       "CAS prevents lost updates and atomically records audit",
       async () => {
-        const payload = (
-          await db.query("select payload from public.bpro_state")
-        ).rows[0].payload;
+        const snapshot = (await db.query("select public.bpro_direct_read_snapshot() snapshot")).rows[0].snapshot;
+        const payload = snapshot.payload;
+        const revision = Number(snapshot.revision);
         let x = await db.query(
-          "select public.bpro_commit(0,$1,$2,'test') saved",
-          [JSON.stringify(payload), owner],
+          "select public.bpro_commit($1,$2,$3,'test') saved",
+          [revision, JSON.stringify(payload), owner],
         );
         assert.equal(x.rows[0].saved, true);
-        x = await db.query("select public.bpro_commit(0,$1,$2,'stale') saved", [
+        x = await db.query("select public.bpro_commit($1,$2,$3,'stale') saved", [
+          revision,
           JSON.stringify(payload),
           owner,
         ]);
@@ -185,6 +230,11 @@ test("migrations, Auth synchronization, RLS, owner protection and atomic commits
           db.query(
             "insert into storage.objects values('33333333-3333-4333-8333-333333333333','bpro-files','attack')",
           ),
+        );
+        await db.exec("reset role");
+        await db.exec(`set role authenticated; select set_config('request.jwt.claim.sub','${owner}',false);`);
+        await db.query(
+          "insert into storage.objects values('44444444-4444-4444-8444-444444444444','bpro-files','123/owner.pdf')",
         );
         await db.exec("reset role");
       },

@@ -465,6 +465,13 @@
     }
   }
   async function call(method, url, body) {
+    if (window.BPRO_DIRECT_API) {
+      try { return await window.BPRO_DIRECT_API.call(method, url, body); }
+      catch (e) {
+        if (e.status === 401 && !url.startsWith("/auth/login")) onUnauthorized();
+        throw new ApiError(e.message || "Supabase request failed.", e.status || 500, e.code);
+      }
+    }
     const headers = {};
     let payload;
     if (body !== void 0) {
@@ -644,6 +651,12 @@
   async function fetchAttachment(url, mode, name) {
     const win = mode === "open" ? window.open("", "_blank") : null;
     try {
+      if (window.BPRO_DIRECT_API) {
+        const file = await window.BPRO_DIRECT_API.fetchAttachment(url);
+        if (mode === "open") win.location = URL.createObjectURL(file.blob);
+        else saveBlob(file.blob, name || file.name);
+        return;
+      }
       const res = await rawFetch("GET", url);
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -707,6 +720,10 @@
         del: (url) => call("DELETE", url),
         /** Uploads each file in formData('files') as its own request (raw bytes). */
         async upload(url, formData) {
+          if (window.BPRO_DIRECT_API) {
+            try { return await window.BPRO_DIRECT_API.upload(url, formData); }
+            catch (e) { throw new ApiError(e.message || "Upload failed.", e.status || 500, e.code); }
+          }
           if (!S2.user?.is_owner)
             throw new ApiError("Only the primary owner can upload files.", 403);
           const files = formData.getAll("files");
