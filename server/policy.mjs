@@ -7,7 +7,11 @@ export const assert = (
   if (!condition) throw new HttpError(status, message);
 };
 export function identity(auth, profile, owner, roles) {
-  const isOwner = auth.id === owner;
+  const isOwner = owner instanceof Set
+    ? owner.has(auth.id)
+    : Array.isArray(owner)
+      ? owner.includes(auth.id)
+      : auth.id === owner;
   assert(
     isOwner || (profile?.active && profile?.role_id),
     403,
@@ -21,7 +25,7 @@ export function identity(auth, profile, owner, roles) {
     email: auth.email,
     name: profile?.name || auth.email,
     role_id: profile?.role_id,
-    role_name: isOwner ? "Primary owner" : role.name,
+    role_name: isOwner ? "Co-owner" : role.name,
     is_owner: isOwner,
     is_admin: isOwner,
     must_change_pw: false,
@@ -37,7 +41,7 @@ export const can = (u, p) => u.is_owner || u.perms.includes(p);
 export const need = (u, p) =>
   assert(can(u, p), 403, "Your role does not allow this action.");
 export const ownerOnly = (u) =>
-  assert(u.is_owner, 403, "Only the primary owner can perform this action.");
+  assert(u.is_owner, 403, "Only a co-owner can perform this action.");
 export function canRead(u, r) {
   return (
     u.is_owner ||

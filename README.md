@@ -2,15 +2,15 @@
 
 BPRO is the procurement dashboard adapted from the supplied HTML. It keeps the dashboard screens, eight role definitions, workflow, requests, tasks, vendors, reports, calendar and configuration. The production site is a static GitHub Pages app that connects directly to Supabase Auth, Postgres RPCs and private Storage. **It does not use a Supabase Edge Function or a service-role/secret key in the browser.**
 
-The production database migration and sole-owner setup are applied to project `ogtwwviftkmdzckgnphd`. The GitHub Pages update is being published; finish the sign-in and upload smoke checks before using this for business records.
+The direct Supabase runtime is deployed on GitHub Pages and targets project `ogtwwviftkmdzckgnphd`. The production database currently has one owner; apply the co-owner migration and provision verified accounts before granting additional owner access.
 
 ## Production setup
 
 1. In Supabase project `ogtwwviftkmdzckgnphd`, confirm Auth is enabled and public sign-up is disabled. Set the Site URL to `https://blaziconhp.github.io` and add that origin to the allowed redirect URLs.
-2. In Supabase SQL Editor, apply these files in order: `supabase/migrations/202610230001_bpro.sql`, `supabase/migrations/202610230002_seed.sql`, then `supabase/migrations/202610260001_static_client_access.sql`. The last migration grants authenticated browser sessions limited RPC access, enables request-scoped reads and owner-only writes for protected areas, and sets private Storage policies. Review it before applying it to production.
-3. In **Authentication → Users**, create or identify the primary owner account and copy its exact UUID. Run `supabase/bootstrap-owner.sql` once after replacing its all-zero UUID with that exact Auth UUID. Do not use an email address as the owner identifier.
+2. In Supabase SQL Editor, apply the migrations in order: `202610230001_bpro.sql`, `202610230002_seed.sql`, `202610260001_static_client_access.sql`, and `202610260002_co_owners.sql`. The direct-access migration grants limited RPC access and installs RLS; the co-owner migration allows multiple explicitly provisioned owner UUIDs. Review migrations before applying them to production.
+3. Create and verify the intended accounts in **Authentication → Users**. For a single owner, use `supabase/bootstrap-owner.sql`. To enable the two configured co-owners, run `supabase/bootstrap-co-owners.sql` after both Auth accounts exist. This script grants the owner boundary to those email-matched UUIDs; it does not create Auth users or set passwords.
 4. Push the repository's `main` branch. The `pages.yml` GitHub Actions workflow publishes `public/` to [https://blaziconhp.github.io/BPRO/](https://blaziconhp.github.io/BPRO/). In GitHub repository **Settings → Pages**, select **GitHub Actions** as the source.
-5. Sign in using the primary owner's Supabase Auth email and password. Create other accounts in Supabase **Authentication → Users**; the database trigger mirrors them into BPRO's user list as disabled/unassigned. In **Admin Console → Users**, the primary owner assigns a role and enables each account.
+5. Sign in using an enabled owner's Supabase Auth email and password. Create other accounts in Supabase **Authentication → Users**; the database trigger mirrors them into BPRO's user list as disabled/unassigned. An owner assigns roles and enables each account.
 
 The only browser-side Supabase values are the project URL and publishable key in `public/config.js`. The publishable key is public by design. Never add a Supabase secret/service-role key to this project, GitHub Pages, or any browser file.
 
@@ -28,7 +28,7 @@ The PGlite database tests run the SQL migrations against local Auth/Storage stub
 
 ## Roles and security
 
-Original roles are retained: Admin; Head of Operations; Operations Lead; Procurement Executive; Head of Marketing/EBO; Marketing Lead; Marketing POC; Viewer. The single primary owner UUID is the only identity allowed into Admin Console, to manage users and roles, change dashboard configuration, view the audit log, import/backup data, or upload/delete files. The non-owner Admin role does not bypass those owner-only rules.
+Original roles are retained: Admin; Head of Operations; Operations Lead; Procurement Executive; Head of Marketing/EBO; Marketing Lead; Marketing POC; Viewer. Only explicitly provisioned owner UUIDs can enter Admin Console, manage users and roles, change dashboard configuration, view the audit log, import/backup data, or upload/delete files. The non-owner Admin role does not bypass those owner-only rules.
 
 All browser state reads and writes go through narrowly granted Postgres RPCs that derive the caller from `auth.uid()`. RLS denies direct access to the raw state and audit tables. The database write RPC checks role permissions, request scope, workflow assignment, financial access and owner-only configuration. Attachment reads are limited to visible requests; uploads and deletes are owner-only. Financial fields are redacted for roles without `financials.view`. Auth passwords are managed only by Supabase Auth and are never copied into BPRO tables.
 
