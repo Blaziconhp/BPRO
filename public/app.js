@@ -725,7 +725,7 @@
             catch (e) { throw new ApiError(e.message || "Upload failed.", e.status || 500, e.code); }
           }
           if (!S2.user?.is_owner)
-            throw new ApiError("Only a co-owner can upload files.", 403);
+            throw new ApiError("Only the primary owner can upload files.", 403);
           const files = formData.getAll("files");
           if (!files.length) throw new ApiError("Choose a file to upload.");
           for (const f of files) {
@@ -3249,7 +3249,7 @@
             : h(
                 "p",
                 { class: "muted" },
-                "A co-owner must upload this step’s required attachment.",
+                "The primary owner must upload this step’s required attachment.",
               )
           : null,
         field(
@@ -5396,7 +5396,7 @@
       return h(
         "div",
         { class: "banner bad" },
-        "Only a co-owner can access Admin Console.",
+        "Only the primary owner can access Admin Console.",
       );
     if (!allowed.length)
       return h(
@@ -5474,7 +5474,7 @@
                   null,
                   h("td", null, u.email),
                   h("td", null, u.name),
-                  h("td", null, owner ? "Co-owner" : role),
+                  h("td", null, owner ? "Primary owner" : role),
                   h("td", null, owner ? "Protected" : active),
                   h(
                     "td",

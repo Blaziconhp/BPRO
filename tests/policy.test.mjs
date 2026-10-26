@@ -39,18 +39,6 @@ test("owner derives from immutable UUID, never role or metadata", () => {
   assert.equal(owner().is_owner, true);
   assert.equal(user(1).is_owner, false);
 });
-test("both explicitly listed co-owners receive owner privileges", () => {
-  const coOwners = [OWNER, "another-owner-id"];
-  const coOwner = identity(
-    { id: "another-owner-id", email: "co-owner@example.test" },
-    null,
-    coOwners,
-    seed.overview.roles,
-  );
-  assert.equal(coOwner.is_owner, true);
-  assert.equal(coOwner.role_name, "Co-owner");
-  assert.deepEqual(coOwner.perms, ["*"]);
-});
 test("unassigned and disabled accounts fail closed", () => {
   for (const p of [
     null,

@@ -3,8 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 const owner = "11111111-1111-4111-8111-111111111111",
-  member = "22222222-2222-4222-8222-222222222222",
-  coOwner = "33333333-3333-4333-8333-333333333333";
+  member = "22222222-2222-4222-8222-222222222222";
 test("migrations, Auth synchronization, RLS, owner protection and atomic commits", async (t) => {
   const db = await PGlite.create();
   try {
@@ -39,15 +38,6 @@ test("migrations, Auth synchronization, RLS, owner protection and atomic commits
     await db.exec(
       await readFile(
         new URL(
-          "../supabase/migrations/202610260002_co_owners.sql",
-          import.meta.url,
-        ),
-        "utf8",
-      ),
-    );
-    await db.exec(
-      await readFile(
-        new URL(
           "../supabase/migrations/202610230002_seed.sql",
           import.meta.url,
         ),
@@ -55,8 +45,8 @@ test("migrations, Auth synchronization, RLS, owner protection and atomic commits
       ),
     );
     await db.query(
-      "insert into auth.users(id,email) values($1,'owner@test.example'),($2,'member@test.example'),($3,'co-owner@test.example')",
-      [owner, member, coOwner],
+      "insert into auth.users(id,email) values($1,'owner@test.example'),($2,'member@test.example')",
+      [owner, member],
     );
     await t.test("Auth users get unassigned disabled profiles", async () => {
       const p = await db.query(
@@ -88,12 +78,11 @@ test("migrations, Auth synchronization, RLS, owner protection and atomic commits
         )
       ).replace("00000000-0000-0000-0000-000000000000", owner),
     );
-    await t.test("explicitly provisioned co-owner is accepted", async () => {
-      await db.query("update public.bpro_profiles set role_id=1,active=true where id=$1", [coOwner]);
-      await db.query("insert into public.bpro_owner(user_id) values($1)", [coOwner]);
-      const owners = await db.query("select count(*)::int n from public.bpro_owner");
-      assert.equal(owners.rows[0].n, 2);
-    });
+    await t.test("second owner rejected by singleton constraint", async () =>
+      assert.rejects(
+        db.query("insert into public.bpro_owner(user_id) values($1)", [member]),
+      ),
+    );
     await t.test(
       "owner cannot be changed, disabled, deleted or removed from Auth",
       async () => {
@@ -144,10 +133,8 @@ test("migrations, Auth synchronization, RLS, owner protection and atomic commits
       const context = (await db.query("select public.bpro_direct_context() context")).rows[0].context;
       assert.equal(context.is_owner, true);
       const users = await db.query("select * from public.bpro_direct_list_users()");
-      assert.equal(users.rows.length, 3);
+      assert.equal(users.rows.length, 2);
       assert.equal(users.rows.find((u) => u.id === owner).is_owner, true);
-      assert.equal(users.rows.find((u) => u.id === coOwner).is_owner, true);
-      assert.equal(users.rows.find((u) => u.id === member).is_owner, false);
       await db.query("select public.bpro_assign_role_direct($1,8,true)", [member]);
       await db.exec("reset role");
       await db.exec(`set role authenticated; select set_config('request.jwt.claim.sub','${member}',false);`);
