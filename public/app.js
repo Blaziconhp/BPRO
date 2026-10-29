@@ -701,13 +701,18 @@
         (window.EBO_CONFIG && window.EBO_CONFIG.apiBase) || "",
       ).replace(/\/+$/, "");
       TOKEN_KEY = "bpro_session";
-      try { memToken = JSON.parse(sessionStorage.getItem(TOKEN_KEY) || "null"); } catch { memToken = null; }
+      try {
+        memToken = JSON.parse(localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY) || "null");
+        if (memToken) localStorage.setItem(TOKEN_KEY, JSON.stringify(memToken));
+        sessionStorage.removeItem(TOKEN_KEY);
+      } catch { memToken = null; }
       getToken = () => memToken;
       setToken = (value) => {
-        if (!value) { memToken = null; sessionStorage.removeItem(TOKEN_KEY); return; }
+        if (!value) { memToken = null; localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY); return; }
         if (typeof value === "string") return;
         memToken = { access: value.access, refresh: value.refresh };
-        sessionStorage.setItem(TOKEN_KEY, JSON.stringify(memToken));
+        localStorage.setItem(TOKEN_KEY, JSON.stringify(memToken));
+        sessionStorage.removeItem(TOKEN_KEY);
       };
       onUnauthorized = () => {};
       setUnauthorizedHandler = (fn) => {
@@ -7687,7 +7692,7 @@
   async function boot() {
     try {
       if (!S2.user) {
-        if (getToken()) {
+        if (window.BPRO_DIRECT_API || getToken()) {
           const me = await api.get("/auth/me").catch((e) => {
             if (e.status === 0) throw e;
             return { user: null };

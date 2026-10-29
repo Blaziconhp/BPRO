@@ -14,12 +14,17 @@ class DirectError extends Error {
   constructor(message, status = 400, code = '') { super(message); this.status = status; this.code = code; }
 }
 function restoreSession() {
-  try { session = JSON.parse(sessionStorage.getItem(sessionKey) || 'null'); }
-  catch { session = null; }
+  try {
+    const saved = localStorage.getItem(sessionKey);
+    session = JSON.parse(saved || sessionStorage.getItem(sessionKey) || 'null');
+    if (session) localStorage.setItem(sessionKey, JSON.stringify(session));
+    sessionStorage.removeItem(sessionKey);
+  } catch { session = null; }
 }
 function persist() {
-  if (session) sessionStorage.setItem(sessionKey, JSON.stringify(session));
-  else sessionStorage.removeItem(sessionKey);
+  if (session) localStorage.setItem(sessionKey, JSON.stringify(session));
+  else localStorage.removeItem(sessionKey);
+  sessionStorage.removeItem(sessionKey);
 }
 async function request(path, { method = 'GET', body, token = session?.access_token, raw = false, headers = {} } = {}) {
   if (!base || !publishable) throw new DirectError('Supabase is not configured for this site.', 503);
